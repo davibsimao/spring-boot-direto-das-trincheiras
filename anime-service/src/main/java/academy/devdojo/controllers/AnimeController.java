@@ -5,11 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @RestController()
 @RequestMapping("v1/animes")
 @Slf4j
-public class AnimesController {
+public class AnimeController {
 
     @GetMapping()
     public List<Anime> listAll(@RequestParam(required = false) String name) {
@@ -23,6 +24,14 @@ public class AnimesController {
         return Anime.getAnimes().stream()
                 .filter(anime -> anime.getId().equals(id))
                 .findFirst().orElse(null);
+    }
+
+    @PostMapping
+    public Anime save(@RequestBody Anime anime) {
+        anime.setId(ThreadLocalRandom.current().nextLong(100_000));
+        Anime.getAnimes().add(anime);
+
+        return anime;
 
     }
 }
