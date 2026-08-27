@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -36,11 +37,13 @@ public class AnimeController {
 
     @GetMapping("{id}")
     public ResponseEntity<AnimeGetResponse> findById(@PathVariable Long id) {
-        log.debug("Request to find anime by id: {}",id);
+        log.debug("Request to find anime by id: {}", id);
         var animeGetResponse = Anime.getAnimes().stream()
                 .filter(anime -> anime.getId().equals(id))
                 .map(MAPPER::toAnimeGetResponse)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Anime not Found"));
+
 
         return ResponseEntity.ok(animeGetResponse);
     }
@@ -56,6 +59,18 @@ public class AnimeController {
         var response = MAPPER.animePostResponse(anime);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+
+        var animeToDelete = Anime.getAnimes().stream()
+                .filter(anime -> anime.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Anime not Found"));
+
+        Anime.getAnimes().remove(animeToDelete);
+
+        return ResponseEntity.noContent().build();
     }
 }
