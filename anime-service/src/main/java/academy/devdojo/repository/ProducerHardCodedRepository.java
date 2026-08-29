@@ -1,7 +1,11 @@
 package academy.devdojo.repository;
 
 import academy.devdojo.domain.Producer;
+import external.dependency.Connection;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -10,9 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@AllArgsConstructor
+@Log4j2
 public class ProducerHardCodedRepository {
     @Getter
     private static final List<Producer> PRODUCERS = new ArrayList<>();
+    @Qualifier(value = "connectionMongoDB")
+    private final Connection connection;
     
     static {
         Producer mappa = Producer.builder().id(1L)
@@ -42,6 +50,7 @@ public class ProducerHardCodedRepository {
     }
 
     public List<Producer> findByName(String name) {
+        log.debug(connection);
         return PRODUCERS.stream().filter(p -> p.getName().equalsIgnoreCase(name)).toList();
     }
 

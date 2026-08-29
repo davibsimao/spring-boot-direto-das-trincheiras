@@ -8,8 +8,6 @@ import academy.devdojo.response.ProducerPostResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.mapstruct.factory.Mappers;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.List;
