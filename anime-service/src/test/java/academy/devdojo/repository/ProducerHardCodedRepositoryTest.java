@@ -44,7 +44,7 @@ class ProducerHardCodedRepositoryTest {
     }
 
     @Test
-    @DisplayName("FindByName returns empty when name is null")
+    @DisplayName("FindById returns empty when name is null")
     @Order(2)
     void findById_ReturnsProducerById_WhenSuccessful() {
         when(producerData.getProducers()).thenReturn(producerList);
@@ -57,7 +57,7 @@ class ProducerHardCodedRepositoryTest {
     }
 
     @Test
-    @DisplayName("findById returns producer with given id")
+    @DisplayName("FindByName returns producer with given id")
     @Order(3)
     void findByName_ReturnsEmptyList_WhenNameIsNull() {
         when(producerData.getProducers()).thenReturn(producerList);

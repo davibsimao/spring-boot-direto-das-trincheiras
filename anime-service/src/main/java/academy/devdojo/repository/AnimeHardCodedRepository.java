@@ -1,37 +1,43 @@
 package academy.devdojo.repository;
 
 import academy.devdojo.domain.Anime;
-import lombok.Getter;
+import external.dependency.Connection;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@AllArgsConstructor
+@Log4j2
 public class AnimeHardCodedRepository {
-    @Getter
-    private static final List<Anime> ANIMES = new ArrayList<>();
+    private final AnimeData animeData;
+    @Qualifier(value = "connectionMongoDB")
+    private Connection connection;
 
     public List<Anime> findAll() {
-        return ANIMES;
+        return animeData.getAnimes();
     }
 
     public Optional<Anime> findById(Long id) {
-        return ANIMES.stream().filter(anime -> anime.getId().equals(id)).findFirst();
+        return animeData.getAnimes().stream().filter(anime -> anime.getId().equals(id)).findFirst();
     }
 
     public List<Anime> findByName(String name) {
-        return ANIMES.stream().filter(p -> p.getName().equalsIgnoreCase(name)).toList();
+        log.debug(connection);
+        return animeData.getAnimes().stream().filter(p -> p.getName().equalsIgnoreCase(name)).toList();
     }
 
     public Anime save(Anime anime) {
-        ANIMES.add(anime);
+        animeData.getAnimes().add(anime);
         return anime;
     }
 
     public void delete(Anime anime){
-        ANIMES.remove(anime);
+        animeData.getAnimes().remove(anime);
 
     }
 

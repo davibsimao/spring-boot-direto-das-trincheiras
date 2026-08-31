@@ -15,4 +15,5 @@ public class ConnectionConfiguration {
     public Connection connectionMongo() {
         return new Connection("localhost", "devdojoMongo", "goku");
     }
+
 }
