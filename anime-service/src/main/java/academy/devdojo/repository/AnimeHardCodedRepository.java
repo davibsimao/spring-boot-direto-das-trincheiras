@@ -12,22 +12,6 @@ import java.util.Optional;
 public class AnimeHardCodedRepository {
     @Getter
     private static final List<Anime> ANIMES = new ArrayList<>();
-    static {
-        Anime naruto = Anime.builder().id(1L)
-                .name("naruto")
-                .build();
-
-        Anime demonSlayer = Anime.builder().id(2L)
-                .name("demon slayer")
-                .build();
-
-        Anime dragonBall = Anime.builder().id(3L)
-                .name("dragon ball")
-                .build();
-
-        ANIMES.addAll(List.of(naruto, demonSlayer, dragonBall));
-    }
-
 
     public List<Anime> findAll() {
         return ANIMES;
