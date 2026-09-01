@@ -22,14 +22,14 @@ class AnimeHardCodedRepositoryTest {
 
     @Mock
     private AnimeData animeData;
-    private final List<Anime> animeList = new ArrayList<>();
+    private List<Anime> animeList;
 
     @BeforeEach
     void init() {
         var onePunchMan = Anime.builder().id(1L).name("one Punch Man").build();
         var jujutsoKaisen = Anime.builder().id(2L).name("Jujutso Kaisen").build();
         var dragonBall = Anime.builder().id(3L).name("Dragon Ball").build();
-        animeList.addAll(List.of(onePunchMan, jujutsoKaisen, dragonBall));
+        animeList = new ArrayList<>(List.of(onePunchMan, jujutsoKaisen, dragonBall));
 
     }
 
@@ -127,7 +127,7 @@ class AnimeHardCodedRepositoryTest {
 
         Assertions.assertThat(this.animeList).contains(animeToUpdate);
 
-        Optional<Anime> animeUpdatedOptional = repository.findById(animeToUpdate.getId());
+        var animeUpdatedOptional = repository.findById(animeToUpdate.getId());
 
         Assertions.assertThat(animeUpdatedOptional).isPresent();
 

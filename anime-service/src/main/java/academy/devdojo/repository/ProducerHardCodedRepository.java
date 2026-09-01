@@ -2,7 +2,7 @@ package academy.devdojo.repository;
 
 import academy.devdojo.domain.Producer;
 import external.dependency.Connection;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Log4j2
 public class ProducerHardCodedRepository {
     private final ProducerData producerData;
