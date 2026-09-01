@@ -75,7 +75,7 @@ class ProducerServiceTest {
     }
 
     @Test
-    @DisplayName("FindById returns empty when name is null")
+    @DisplayName("FindById returns producer when id is found")
     @Order(4)
     void findById_ReturnsProducerById_WhenSuccessful() {
         var expectedProducer = producerList.getFirst();
@@ -158,7 +158,7 @@ class ProducerServiceTest {
 
 
         Assertions.assertThatException()
-                .isThrownBy(() -> service.delete(producerToUpdate.getId()))
+                .isThrownBy(() -> service.update(producerToUpdate))
                 .isInstanceOf(ResponseStatusException.class);
     }
 }
