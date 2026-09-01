@@ -105,7 +105,7 @@ class ProducerServiceTest {
         var producerTosave = Producer.builder().id(99L).name("mappa").createdAt(LocalDateTime.now()).build();
         when(repository.save(producerTosave)).thenReturn(producerTosave);
 
-        var savedProducer = repository.save(producerTosave);
+        var savedProducer = service.save(producerTosave);
 
         Assertions.assertThat(savedProducer).isEqualTo(producerTosave).hasNoNullFieldsOrProperties();
     }
@@ -118,7 +118,6 @@ class ProducerServiceTest {
 
         when(repository.findById(producerToDelete.getId())).thenReturn(Optional.of(producerToDelete));
         doNothing().when(repository).delete(producerToDelete);
-        repository.delete(producerToDelete);
 
         Assertions.assertThatNoException().isThrownBy(() -> service.delete(producerToDelete.getId()));
     }
