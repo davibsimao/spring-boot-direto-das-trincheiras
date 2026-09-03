@@ -192,7 +192,7 @@ class ProducerControllerTest {
 
         var id = producerList.getFirst().getId();
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/v1/producers/{id}", id)
+                        .delete("/v1/animes/{id}", id)
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
