@@ -1,0 +1,5 @@
+database:
+  url: localhost:9999
+  username: mongo
+  password: mongo
+
