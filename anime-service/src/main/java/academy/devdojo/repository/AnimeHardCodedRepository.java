@@ -1,11 +1,9 @@
 package academy.devdojo.repository;
 
 import academy.devdojo.domain.Anime;
-import external.dependency.Connection;
-import lombok.AllArgsConstructor;
+import academy.devdojo.config.Connection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,8 +14,6 @@ import java.util.Optional;
 @Log4j2
 public class AnimeHardCodedRepository {
     private final AnimeData animeData;
-    @Qualifier(value = "connectionMongoDB")
-    private final Connection connection;
 
     public List<Anime> findAll() {
         return animeData.getAnimes();
@@ -28,7 +24,6 @@ public class AnimeHardCodedRepository {
     }
 
     public List<Anime> findByName(String name) {
-        log.debug(connection);
         return animeData.getAnimes().stream().filter(p -> p.getName().equalsIgnoreCase(name)).toList();
     }
 
