@@ -1,5 +1,6 @@
 package academy.devdojo.service;
 
+import academy.devdojo.commons.AnimeUtils;
 import academy.devdojo.domain.Anime;
 import academy.devdojo.repository.AnimeHardCodedRepository;
 import org.assertj.core.api.Assertions;
@@ -11,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,14 +28,12 @@ class AnimeServiceTest {
     @Mock
     private AnimeHardCodedRepository repository;
     private List<Anime> animeList;
+    @InjectMocks
+    private AnimeUtils animeUtils;
 
     @BeforeEach
     void init() {
-        var deathNote = Anime.builder().id(1L).name("Death note").build();
-        var aot = Anime.builder().id(2L).name("aot").build();
-        var nanatsuNoTaisai = Anime.builder().id(3L).name("Nanatsu no taisai").build();
-
-        animeList = new ArrayList<>(List.of(deathNote, aot, nanatsuNoTaisai));
+        animeList = animeUtils.newAnimeList();
     }
 
     @Test
@@ -104,7 +102,7 @@ class AnimeServiceTest {
     @DisplayName("save creates a anime")
     @Order(6)
     void save_CreatesAnime_WhenSuccessful() {
-        var animeToSave = Anime.builder().id(22L).name("Solo Level").build();
+        var animeToSave = animeUtils.newAnimeToSave();
         when(repository.save(animeToSave)).thenReturn(animeToSave);
 
         var animeSaved = service.save(animeToSave);

@@ -1,5 +1,6 @@
 package academy.devdojo.repository;
 
+import academy.devdojo.commons.AnimeUtils;
 import academy.devdojo.domain.Anime;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -8,9 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
@@ -23,13 +22,12 @@ class AnimeHardCodedRepositoryTest {
     @Mock
     private AnimeData animeData;
     private List<Anime> animeList;
+    @InjectMocks
+    private AnimeUtils animeUtils;
 
     @BeforeEach
     void init() {
-        var onePunchMan = Anime.builder().id(1L).name("one Punch Man").build();
-        var jujutsoKaisen = Anime.builder().id(2L).name("Jujutso Kaisen").build();
-        var dragonBall = Anime.builder().id(3L).name("Dragon Ball").build();
-        animeList = new ArrayList<>(List.of(onePunchMan, jujutsoKaisen, dragonBall));
+        animeList = animeUtils.newAnimeList();
 
     }
 
@@ -52,9 +50,9 @@ class AnimeHardCodedRepositoryTest {
 
         var expectedAnime = animeList.getFirst();
 
-       var anime = repository.findById(expectedAnime.getId());
+        var anime = repository.findById(expectedAnime.getId());
 
-       Assertions.assertThat(anime).isPresent().contains(expectedAnime);
+        Assertions.assertThat(anime).isPresent().contains(expectedAnime);
     }
 
 
@@ -81,13 +79,14 @@ class AnimeHardCodedRepositoryTest {
 
         Assertions.assertThat(anime).hasSize(1).contains(expectedAnime);
     }
+
     @Test
     @DisplayName("save creates a producer")
     @Order(5)
     void save_CreatesProducer_WhenSuccessful() {
         when(animeData.getAnimes()).thenReturn(animeList);
 
-        var animeToSave = Anime.builder().id(99L).name("jojo bizarre adventures").build();
+        var animeToSave = animeUtils.newAnimeToSave();
 
         var anime = repository.save(animeToSave);
 
