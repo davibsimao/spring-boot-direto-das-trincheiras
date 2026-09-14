@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.when;
 
 @WebMvcTest(controllers = AnimeController.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -66,7 +66,7 @@ class AnimeControllerTest {
     @Test
     @DisplayName("GET v1/animes?name=Death note  returns list with found object when name exists")
     @Order(2)
-    void findAll_ReturnsFoundProducerInLIst_WhenNameIsFound() throws Exception {
+    void findAll_ReturnsFoundAnimeInList_WhenNameIsFound() throws Exception {
         when(animeData.getAnimes()).thenReturn(animeList);
 
         var name = "Death Note";
@@ -112,7 +112,7 @@ class AnimeControllerTest {
     }
 
     @Test
-    @DisplayName("GET v1/animes/99 throwsResponseStatusException 404 when producer is not found")
+    @DisplayName("GET v1/animes/99 throwsResponseStatusException 404 when anime is not found")
     @Order(5)
     void findById_ThrowsResponseStatusException_WhenAnimeIsNotFound() throws Exception {
         when(animeData.getAnimes()).thenReturn(animeList);
@@ -212,7 +212,6 @@ class AnimeControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.status().reason("anime not Found"));
     }
-
 
 
     private String readResourceFile(String fileName) throws IOException {
