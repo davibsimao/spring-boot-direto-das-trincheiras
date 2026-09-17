@@ -7,10 +7,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @SpringBootApplication
 @EnableConfigurationProperties(ConnectionConfigurationProperties.class)
-public class AnimeServiceApplication {
+public class UserServiceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(AnimeServiceApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(UserServiceApplication.class, args);
+	}
 
 }

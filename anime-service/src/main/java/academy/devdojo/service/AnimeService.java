@@ -14,7 +14,7 @@ import java.util.List;
 public class AnimeService {
     private final AnimeHardCodedRepository repository;
 
-    public List<Anime> findAll (String name) {
+    public List<Anime> findAll(String name) {
         return name == null ? repository.findAll() : repository.findByName(name);
 
     }

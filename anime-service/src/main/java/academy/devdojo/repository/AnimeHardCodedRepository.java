@@ -1,7 +1,6 @@
 package academy.devdojo.repository;
 
 import academy.devdojo.domain.Anime;
-import academy.devdojo.config.Connection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
@@ -32,7 +31,7 @@ public class AnimeHardCodedRepository {
         return anime;
     }
 
-    public void delete(Anime anime){
+    public void delete(Anime anime) {
         animeData.getAnimes().remove(anime);
 
     }

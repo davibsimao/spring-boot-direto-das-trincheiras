@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("v1/animes")
 @Slf4j
 @RequiredArgsConstructor
-public class  AnimeController {
+public class AnimeController {
     private final AnimeMapper mapper;
     private final AnimeService service;
 

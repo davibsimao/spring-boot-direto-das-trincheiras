@@ -23,7 +23,7 @@ public class ProducerUtils {
         return new ArrayList<>(List.of(ufotable, witStudio, studioGhibli));
     }
 
-    public Producer newProducerToSave () {
+    public Producer newProducerToSave() {
         return Producer.builder().id(99L).name("MAPPA").createdAt(LocalDateTime.now()).build();
     }
 }

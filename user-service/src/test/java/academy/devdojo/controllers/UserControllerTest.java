@@ -1,10 +1,10 @@
 package academy.devdojo.controllers;
 
 import academy.devdojo.commons.FileUtils;
-import academy.devdojo.commons.ProducerUtils;
-import academy.devdojo.domain.Producer;
-import academy.devdojo.repository.ProducerData;
-import academy.devdojo.repository.ProducerHardCodedRepository;
+import academy.devdojo.commons.UserUtils;
+import academy.devdojo.domain.User;
+import academy.devdojo.repository.UserData;
+import academy.devdojo.repository.UserHardCodedRepository;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,37 +22,36 @@ import java.util.List;
 
 import static org.mockito.BDDMockito.when;
 
-@WebMvcTest(controllers = ProducerController.class)
+@WebMvcTest(controllers = UserController.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ComponentScan(basePackages = {"academy.devdojo"})
 //@ActiveProfiles("test")
-class ProducerControllerTest {
-    private static final String URL = "/v1/producers";
+class UserControllerTest {
+    private static final String URL = "/v1/users";
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private ProducerData producerData;
+    private UserData userData;
     @SpyBean
-    private ProducerHardCodedRepository repository;
-    private List<Producer> producerList;
+    private UserHardCodedRepository repository;
+    private List<User> userList;
     @Autowired
     private FileUtils fileUtils;
     @Autowired
-    private ProducerUtils producerUtils;
+    private UserUtils userUtils;
 
     @BeforeEach
     void init() {
-        producerList = producerUtils.newProducerList();
+        userList = userUtils.newUserList();
     }
 
     @Test
-    @DisplayName("GET v1/producers returns as list with all producers when argument is null")
+    @DisplayName("GET v1/users returns as list with all users when argument is null")
     @Order(1)
-    void findAll_ReturnsAllProducers_WhenArgumentIsNull() throws Exception {
-        when(producerData.getProducers()).thenReturn(producerList);
+    void findAll_ReturnsAllUsers_WhenArgumentIsNull() throws Exception {
+        when(userData.getUsers()).thenReturn(userList);
 
-        var response = fileUtils.readResourceFile("producer/get-producer-null-name-200.json");
-
+        var response = fileUtils.readResourceFile("user/get-user-null-email-200.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get(URL))
                 .andDo(MockMvcResultHandlers.print())
@@ -61,43 +60,42 @@ class ProducerControllerTest {
     }
 
     @Test
-    @DisplayName("GET v1/producers?name=Ufotable  returns list with found object when name exists")
+    @DisplayName("GET v1/users?email=pedrovenetilo@gmail.com returns list with found object when email exists")
     @Order(2)
-    void findAll_ReturnsFoundProducerInLIst_WhenNameIsFound() throws Exception {
-        when(producerData.getProducers()).thenReturn(producerList);
+    void findAll_ReturnsFoundUserInList_WhenEmailIsFound() throws Exception {
+        when(userData.getUsers()).thenReturn(userList);
 
-        var response = fileUtils.readResourceFile("producer/get-producer-ufotable-name-200.json");
-        var name = "Ufotable";
+        var response = fileUtils.readResourceFile("user/get-user-pedrovenetilo-email-200.json");
+        var email = "pedrovenetilo@gmail.com";
 
-
-        mockMvc.perform(MockMvcRequestBuilders.get(URL).param("name", name))
+        mockMvc.perform(MockMvcRequestBuilders.get(URL).param("email", email))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(response));
     }
 
     @Test
-    @DisplayName("GET v1/producers?name=x returns empty list when name is not found")
+    @DisplayName("GET v1/users?email=x returns empty list when email is not found")
     @Order(3)
-    void findAll_ReturnsEmptyList_WhenNameIsNotFound() throws Exception {
-        when(producerData.getProducers()).thenReturn(producerList);
+    void findAll_ReturnsEmptyList_WhenEmailIsNotFound() throws Exception {
+        when(userData.getUsers()).thenReturn(userList);
 
-        var response = fileUtils.readResourceFile("producer/get-producer-x-name-200.json");
-        var name = "x";
+        var response = fileUtils.readResourceFile("user/get-user-x-email-200.json");
+        var email = "x";
 
-        mockMvc.perform(MockMvcRequestBuilders.get(URL).param("name", name))
+        mockMvc.perform(MockMvcRequestBuilders.get(URL).param("email", email))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(response));
     }
 
     @Test
-    @DisplayName("GET v1/producers/1 returns producer when id is found")
+    @DisplayName("GET v1/users/1 returns user when id is found")
     @Order(4)
-    void findById_ReturnsProducerById_WhenSuccessful() throws Exception {
-        when(producerData.getProducers()).thenReturn(producerList);
+    void findById_ReturnsUserById_WhenSuccessful() throws Exception {
+        when(userData.getUsers()).thenReturn(userList);
 
-        var response = fileUtils.readResourceFile("producer/get-producer-by-id-200.json");
+        var response = fileUtils.readResourceFile("user/get-user-by-id-200.json");
         var id = 1L;
 
         mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", id))
@@ -107,29 +105,29 @@ class ProducerControllerTest {
     }
 
     @Test
-    @DisplayName("GET v1/producers/99 throwsResponseStatusException 404 when producer is not found")
+    @DisplayName("GET v1/users/99 throwsResponseStatusException 404 when user is not found")
     @Order(5)
-    void findById_ThrowsResponseStatusException_WhenProducerIsNotFound() throws Exception {
-        when(producerData.getProducers()).thenReturn(producerList);
+    void findById_ThrowsResponseStatusException_WhenUserIsNotFound() throws Exception {
+        when(userData.getUsers()).thenReturn(userList);
 
         var id = 99L;
 
         mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", id))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.status().reason("producer not Found"));
+                .andExpect(MockMvcResultMatchers.status().reason("user not found"));
     }
 
     @Test
-    @DisplayName("POST v1/producers save creates a producer")
+    @DisplayName("POST v1/users save creates a user")
     @Order(6)
-    void save_CreatesProducer_WhenSuccessful() throws Exception {
-        var request = fileUtils.readResourceFile("producer/post-request-producer-200.json");
-        var response = fileUtils.readResourceFile("producer/post-response-producer-201.json");
+    void save_CreatesUser_WhenSuccessful() throws Exception {
+        var request = fileUtils.readResourceFile("user/post-request-user-200.json");
+        var response = fileUtils.readResourceFile("user/post-response-user-201.json");
 
-        var producerTosave = producerUtils.newProducerToSave();
+        var userToSave = userUtils.newUserToSave();
 
-        when(repository.save(ArgumentMatchers.any())).thenReturn(producerTosave);
+        when(repository.save(ArgumentMatchers.any())).thenReturn(userToSave);
         mockMvc.perform(MockMvcRequestBuilders
                         .post(URL)
                         .content(request)
@@ -143,12 +141,12 @@ class ProducerControllerTest {
     }
 
     @Test
-    @DisplayName("PUT v1/producers updates a producer")
+    @DisplayName("PUT v1/users updates a user")
     @Order(7)
-    void update_updatesProducer_WhenSuccessful() throws Exception {
-        when(producerData.getProducers()).thenReturn(producerList);
+    void update_updatesUser_WhenSuccessful() throws Exception {
+        when(userData.getUsers()).thenReturn(userList);
 
-        var request = fileUtils.readResourceFile("producer/put-request-producer-200.json");
+        var request = fileUtils.readResourceFile("user/put-request-user-200.json");
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put(URL)
@@ -160,12 +158,12 @@ class ProducerControllerTest {
     }
 
     @Test
-    @DisplayName("PUT v1/producers throws ResponseStatusException when producer is not found")
+    @DisplayName("PUT v1/users throws ResponseStatusException when user is not found")
     @Order(8)
-    void update_ResponseStatusException_WhenProducerIsNotFound() throws Exception {
-        when(producerData.getProducers()).thenReturn(producerList);
+    void update_ResponseStatusException_WhenUserIsNotFound() throws Exception {
+        when(userData.getUsers()).thenReturn(userList);
 
-        var request = fileUtils.readResourceFile("producer/put-request-producer-404.json");
+        var request = fileUtils.readResourceFile("user/put-request-user-404.json");
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put(URL)
@@ -174,16 +172,16 @@ class ProducerControllerTest {
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.status().reason("producer not Found"));
+                .andExpect(MockMvcResultMatchers.status().reason("user not found"));
     }
 
     @Test
-    @DisplayName("DELETE v1/producers/1 removes a producer")
+    @DisplayName("DELETE v1/users/1 removes a user")
     @Order(9)
-    void delete_RemoveProducer_WhenSuccessful() throws Exception {
-        when(producerData.getProducers()).thenReturn(producerList);
+    void delete_RemoveUser_WhenSuccessful() throws Exception {
+        when(userData.getUsers()).thenReturn(userList);
 
-        var id = producerList.getFirst().getId();
+        var id = userList.getFirst().getId();
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(URL + "/{id}", id)
                 )
@@ -192,17 +190,16 @@ class ProducerControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE v1/producers/99 throws ResponseStatusException when producer is not found")
+    @DisplayName("DELETE v1/users/99 throws ResponseStatusException when user is not found")
     @Order(10)
-    void delete_ResponseStatusException_WhenProducerIsNotFound() throws Exception {
-        when(producerData.getProducers()).thenReturn(producerList);
+    void delete_ResponseStatusException_WhenUserIsNotFound() throws Exception {
+        when(userData.getUsers()).thenReturn(userList);
 
         var id = 99L;
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(URL + "/{id}", id))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.status().reason("producer not Found"));
-
+                .andExpect(MockMvcResultMatchers.status().reason("user not found"));
     }
 }
