@@ -7,6 +7,7 @@ import academy.devdojo.request.UserPutRequest;
 import academy.devdojo.response.UserGetResponse;
 import academy.devdojo.response.UserPostResponse;
 import academy.devdojo.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -46,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE, headers = "x-api-key")
-    public ResponseEntity<UserPostResponse> save(@RequestBody UserPostRequest userPostRequest, @RequestHeader HttpHeaders headers) {
+    public ResponseEntity<UserPostResponse> save(@RequestBody @Valid UserPostRequest userPostRequest, @RequestHeader HttpHeaders headers) {
         log.info("{}", headers);
         var user = mapper.toUser(userPostRequest);
 
@@ -67,7 +68,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody UserPutRequest request) {
+    public ResponseEntity<Void> update(@RequestBody @Valid UserPutRequest request) {
         log.debug("Request to update user {}", request);
 
         var userToUpdate = mapper.toUser(request);

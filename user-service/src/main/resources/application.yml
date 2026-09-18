@@ -15,6 +15,7 @@ server:
   tomcat:
     threads:
       max: 20
+  port: 8090
 
 database:
   url: ${DB_URL:localhost}:${DB_PORT:3306}
