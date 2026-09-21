@@ -111,9 +111,9 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET v1/users/99 throwsResponseStatusException 404 when user is not found")
+    @DisplayName("GET v1/users/99 throwsNotFound 404 when user is not found")
     @Order(5)
-    void findById_ThrowsResponseStatusException_WhenUserIsNotFound() throws Exception {
+    void findById_ThrowsNotFound_WhenUserIsNotFound() throws Exception {
         when(userData.getUsers()).thenReturn(userList);
 
         var id = 99L;
@@ -164,9 +164,9 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("PUT v1/users throws ResponseStatusException when user is not found")
+    @DisplayName("PUT v1/users throws NotFound when user is not found")
     @Order(8)
-    void update_ResponseStatusException_WhenUserIsNotFound() throws Exception {
+    void update_NotFound_WhenUserIsNotFound() throws Exception {
         when(userData.getUsers()).thenReturn(userList);
 
         var request = fileUtils.readResourceFile("user/put-request-user-404.json");
@@ -196,9 +196,9 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE v1/users/99 throws ResponseStatusException when user is not found")
+    @DisplayName("DELETE v1/users/99 throws NotFound when user is not found")
     @Order(10)
-    void delete_ResponseStatusException_WhenUserIsNotFound() throws Exception {
+    void delete_NotFound_WhenUserIsNotFound() throws Exception {
         when(userData.getUsers()).thenReturn(userList);
 
         var id = 99L;
