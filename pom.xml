@@ -12,6 +12,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>commons-core-new</module>
         <module>anime-service</module>
         <module>user-service</module>
     </modules>

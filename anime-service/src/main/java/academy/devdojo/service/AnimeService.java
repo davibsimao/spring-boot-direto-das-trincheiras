@@ -41,6 +41,5 @@ public class AnimeService {
 
     public void assertAnimeExists(Long id) {
         findByIdOrThrowNotFound(id);
-
     }
 }
