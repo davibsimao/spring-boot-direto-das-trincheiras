@@ -4,7 +4,6 @@ import academy.devdojo.commons.FileUtils;
 import academy.devdojo.commons.UserUtils;
 import academy.devdojo.domain.User;
 import academy.devdojo.repository.UserData;
-import academy.devdojo.repository.UserHardCodedRepository;
 import academy.devdojo.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -15,7 +14,6 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,9 +39,7 @@ class UserControllerTest {
     @MockBean
     private UserData userData;
     @MockBean
-    private UserRepository userRepository;
-    @SpyBean
-    private UserHardCodedRepository repository;
+    private UserRepository repository;
     private List<User> userList;
     @Autowired
     private FileUtils fileUtils;
@@ -58,7 +55,7 @@ class UserControllerTest {
     @DisplayName("GET v1/users returns as list with all users when argument is null")
     @Order(1)
     void findAll_ReturnsAllUsers_WhenArgumentIsNull() throws Exception {
-        when(userRepository.findAll()).thenReturn(userList);
+        when(repository.findAll()).thenReturn(userList);
 
         var response = fileUtils.readResourceFile("user/get-user-null-email-200.json");
 
@@ -72,10 +69,11 @@ class UserControllerTest {
     @DisplayName("GET v1/users?email=pedrovenetilo@gmail.com returns list with found object when email exists")
     @Order(2)
     void findAll_ReturnsFoundUserInList_WhenEmailIsFound() throws Exception {
-        when(userData.getUsers()).thenReturn(userList);
-
         var response = fileUtils.readResourceFile("user/get-user-pedrovenetilo-email-200.json");
         var email = "pedrovenetilo@gmail.com";
+
+        var pedro = userList.stream().filter(user -> user.getEmail().equals(email)).findFirst().orElse(null);
+        when(repository.findByEmail(email)).thenReturn(Collections.singletonList(pedro));
 
         mockMvc.perform(MockMvcRequestBuilders.get(URL).param("email", email))
                 .andDo(MockMvcResultHandlers.print())
@@ -102,10 +100,11 @@ class UserControllerTest {
     @DisplayName("GET v1/users/1 returns user when id is found")
     @Order(4)
     void findById_ReturnsUserById_WhenSuccessful() throws Exception {
-        when(userData.getUsers()).thenReturn(userList);
-
         var response = fileUtils.readResourceFile("user/get-user-by-id-200.json");
         var id = 1L;
+        var foundUser = userList.stream().filter(user -> user.getId().equals(id)).findFirst();
+
+        when(repository.findById(id)).thenReturn(foundUser);
 
         mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", id))
                 .andDo(MockMvcResultHandlers.print())
@@ -155,9 +154,12 @@ class UserControllerTest {
     @DisplayName("PUT v1/users updates a user")
     @Order(7)
     void update_updatesUser_WhenSuccessful() throws Exception {
-        when(userData.getUsers()).thenReturn(userList);
 
         var request = fileUtils.readResourceFile("user/put-request-user-200.json");
+        var id = 1L;
+        var foundUser = userList.stream().filter(user -> user.getId().equals(id)).findFirst();
+
+        when(repository.findById(id)).thenReturn(foundUser);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put(URL)
@@ -192,9 +194,13 @@ class UserControllerTest {
     @DisplayName("DELETE v1/users/1 removes a user")
     @Order(9)
     void delete_RemoveUser_WhenSuccessful() throws Exception {
+        var id = userList.getFirst().getId();
         when(userData.getUsers()).thenReturn(userList);
 
-        var id = userList.getFirst().getId();
+        var foundUser = userList.stream().filter(user -> user.getId().equals(id)).findFirst();
+
+        when(repository.findById(id)).thenReturn(foundUser);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(URL + "/{id}", id)
                 )
@@ -300,7 +306,6 @@ class UserControllerTest {
         var emailRequiredError = "the field 'email' is required";
         return new ArrayList<>(List.of(fistNameRequiredError, lastNameRequiredError, emailRequiredError));
     }
-
 
 
 }

@@ -2,7 +2,6 @@ package academy.devdojo.service;
 
 import academy.devdojo.commons.UserUtils;
 import academy.devdojo.domain.User;
-import academy.devdojo.repository.UserHardCodedRepository;
 import academy.devdojo.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -28,9 +27,7 @@ class UserServiceTest {
     @InjectMocks
     private UserService service;
     @Mock
-    private UserHardCodedRepository repository;
-    @Mock
-    private UserRepository userRepository;
+    private UserRepository repository;
     private List<User> userList;
     @InjectMocks
     private UserUtils userUtils;
@@ -42,7 +39,7 @@ class UserServiceTest {
     @DisplayName("FindAll returns a list with all users when argument is null")
     @Order(1)
     void findAll_ReturnsAllUsers_WhenArgumentIsNull() {
-        when(userRepository.findAll()).thenReturn(userList);
+        when(repository.findAll()).thenReturn(userList);
 
         var users = service.findAll(null);
 
@@ -167,7 +164,7 @@ class UserServiceTest {
         when(repository.findById(userToUpdate.getId()))
                 .thenReturn(Optional.of(userToUpdate));
 
-        doNothing().when(repository).update(userToUpdate);
+        when(repository.save(userToUpdate)).thenReturn(userToUpdate);
 
         Assertions.assertThatNoException()
                 .isThrownBy(() -> service.update(userToUpdate));
