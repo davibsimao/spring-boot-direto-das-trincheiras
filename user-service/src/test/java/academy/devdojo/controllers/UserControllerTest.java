@@ -3,7 +3,6 @@ package academy.devdojo.controllers;
 import academy.devdojo.commons.FileUtils;
 import academy.devdojo.commons.UserUtils;
 import academy.devdojo.domain.User;
-import academy.devdojo.repository.UserData;
 import academy.devdojo.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -36,8 +35,6 @@ class UserControllerTest {
     private static final String URL = "/v1/users";
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
-    private UserData userData;
     @MockBean
     private UserRepository repository;
     private List<User> userList;
@@ -85,7 +82,6 @@ class UserControllerTest {
     @DisplayName("GET v1/users?email=x returns empty list when email is not found")
     @Order(3)
     void findAll_ReturnsEmptyList_WhenEmailIsNotFound() throws Exception {
-        when(userData.getUsers()).thenReturn(userList);
 
         var response = fileUtils.readResourceFile("user/get-user-x-email-200.json");
         var email = "x";
@@ -116,8 +112,6 @@ class UserControllerTest {
     @DisplayName("GET v1/users/99 throwsNotFound 404 when user is not found")
     @Order(5)
     void findById_ThrowsNotFound_WhenUserIsNotFound() throws Exception {
-        when(userData.getUsers()).thenReturn(userList);
-
         var response = fileUtils.readResourceFile("user/get-user-by-id-404.json");
         var id = 99L;
 
@@ -174,8 +168,6 @@ class UserControllerTest {
     @DisplayName("PUT v1/users throws NotFound when user is not found")
     @Order(8)
     void update_NotFound_WhenUserIsNotFound() throws Exception {
-        when(userData.getUsers()).thenReturn(userList);
-
         var request = fileUtils.readResourceFile("user/put-request-user-404.json");
         var response = fileUtils.readResourceFile("user/put-user-by-id-404.json");
 
@@ -195,8 +187,6 @@ class UserControllerTest {
     @Order(9)
     void delete_RemoveUser_WhenSuccessful() throws Exception {
         var id = userList.getFirst().getId();
-        when(userData.getUsers()).thenReturn(userList);
-
         var foundUser = userList.stream().filter(user -> user.getId().equals(id)).findFirst();
 
         when(repository.findById(id)).thenReturn(foundUser);
@@ -212,8 +202,6 @@ class UserControllerTest {
     @DisplayName("DELETE v1/users/99 throws NotFound when user is not found")
     @Order(10)
     void delete_NotFound_WhenUserIsNotFound() throws Exception {
-        when(userData.getUsers()).thenReturn(userList);
-
         var response = fileUtils.readResourceFile("user/delete-user-by-id-404.json");
         var id = 99L;
         mockMvc.perform(MockMvcRequestBuilders
