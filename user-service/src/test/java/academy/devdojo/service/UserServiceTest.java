@@ -2,6 +2,7 @@ package academy.devdojo.service;
 
 import academy.devdojo.commons.UserUtils;
 import academy.devdojo.domain.User;
+import academy.devdojo.exception.EmailAlreadyExistsException;
 import academy.devdojo.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -115,8 +116,8 @@ class UserServiceTest {
     void save_CreatesUser_WhenSuccessful() {
         var userToSave = userUtils.newUserToSave();
 
-        when(repository.save(userToSave))
-                .thenReturn(userToSave);
+        when(repository.existsByEmail(userToSave.getEmail())).thenReturn(false);
+        when(repository.save(userToSave)).thenReturn(userToSave);
 
         var savedUser = service.save(userToSave);
 
@@ -158,11 +159,13 @@ class UserServiceTest {
     @DisplayName("update updates a user")
     @Order(9)
     void update_UpdatesUser_WhenSuccessful() {
-        var userToUpdate = userList.getFirst();
-        userToUpdate.setFirstName("Davi");
+        var userToUpdate = userList.getFirst().withFirstName("Davi");
 
         when(repository.findById(userToUpdate.getId()))
                 .thenReturn(Optional.of(userToUpdate));
+
+        when(repository.findByEmailAndIdNot(userToUpdate.getEmail(), userToUpdate.getId()))
+                .thenReturn(Optional.empty());
 
         when(repository.save(userToUpdate)).thenReturn(userToUpdate);
 
@@ -182,5 +185,36 @@ class UserServiceTest {
         Assertions.assertThatException()
                 .isThrownBy(() -> service.update(userToUpdate))
                 .isInstanceOf(ResponseStatusException.class);
+    }
+
+    @Test
+    @DisplayName("save throws EmailAlreadyExistsException when email already exists")
+    @Order(11)
+    void save_ThrowsEmailAlreadyExistsException_WhenEmailAlreadyExists() {
+        var userToSave = userUtils.newUserToSave();
+
+        when(repository.existsByEmail(userToSave.getEmail())).thenReturn(true);
+
+        Assertions.assertThatException()
+                .isThrownBy(() -> service.save(userToSave))
+                .isInstanceOf(EmailAlreadyExistsException.class);
+    }
+
+    @Test
+    @DisplayName("update throws EmailAlreadyExistsException when email belongs to another user")
+    @Order(12)
+    void update_ThrowsEmailAlreadyExistsException_WhenEmailAlreadyExistsForAnotherUser() {
+        var userToUpdate = userList.getFirst();
+        var anotherUser = userList.get(1);
+
+        when(repository.findById(userToUpdate.getId()))
+                .thenReturn(Optional.of(userToUpdate));
+
+        when(repository.findByEmailAndIdNot(userToUpdate.getEmail(), userToUpdate.getId()))
+                .thenReturn(Optional.of(anotherUser));
+
+        Assertions.assertThatException()
+                .isThrownBy(() -> service.update(userToUpdate))
+                .isInstanceOf(EmailAlreadyExistsException.class);
     }
 }

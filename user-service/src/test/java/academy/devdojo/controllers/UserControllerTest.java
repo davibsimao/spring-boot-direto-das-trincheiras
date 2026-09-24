@@ -202,6 +202,8 @@ class UserControllerTest {
     @DisplayName("DELETE v1/users/99 throws NotFound when user is not found")
     @Order(10)
     void delete_NotFound_WhenUserIsNotFound() throws Exception {
+        when(repository.findAll()).thenReturn(userList);
+
         var response = fileUtils.readResourceFile("user/delete-user-by-id-404.json");
         var id = 99L;
         mockMvc.perform(MockMvcRequestBuilders
